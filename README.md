@@ -11,6 +11,10 @@ TWITCH_CLIENT_ID=your_client_id
 TWITCH_CLIENT_SECRET=your_client_secret
 # optional: TOP_GAME_ID or TOP_BROADCASTER_ID
 PERIOD_MINUTES=60
+VIDEO_MCP_BASE_URL=https://your-video-mcp-server.example.com
+VIDEO_MCP_API_KEY=your_api_key_here
+# optional friendly name used in intro voiceover
+# GAME_NAME=Valorant
 ```
 
 2. Install and run locally:
@@ -22,8 +26,11 @@ npm run dev
 
 Usage
 
-- Open `http://localhost:3000` and optionally provide a `Game ID` or adjust period/limit and click Refresh.
-- The server route is `GET /api/top-clips` and accepts query params `game_id`, `broadcaster_id`, `limit`, `periodMinutes`.
+- Open `http://localhost:3000` and optionally provide a `Game ID`, `Game Name`, or adjust period/limit and click Refresh.
+- Click `Generate TikTok Video` to submit a stitched hourly video job to the configured Video MCP server.
+- The generated job payload includes a 9:16 output, an AI intro voice line like "Here is your hourly dose of Valorant", and an interstitial prompt before each clip like "Here's a clip from <channel name>".
+- The server route is `GET /api/top-clips` and returns the top clips from the past hour, sorted by view count.
+- The job route is `POST /api/generate-hourly-video` and accepts query params or JSON body fields `game_id`, `broadcaster_id`, `game_name`, `periodMinutes`.
 
 Notes
 
