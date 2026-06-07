@@ -27,10 +27,21 @@ npm run dev
 Usage
 
 - Open `http://localhost:3000` and optionally provide a `Game ID`, `Game Name`, or adjust period/limit and click Refresh.
+- If `Game ID` is not provided, the app will try to resolve `Game Name` to a Twitch game ID automatically.
 - Click `Generate TikTok Video` to submit a stitched hourly video job to the configured Video MCP server.
 - The generated job payload includes a 9:16 output, an AI intro voice line like "Here is your hourly dose of Valorant", and an interstitial prompt before each clip like "Here's a clip from <channel name>".
 - The server route is `GET /api/top-clips` and returns the top clips from the past hour, sorted by view count.
 - The job route is `POST /api/generate-hourly-video` and accepts query params or JSON body fields `game_id`, `broadcaster_id`, `game_name`, `periodMinutes`.
+
+Example JSON body for `/api/generate-hourly-video`:
+
+```json
+{
+  "game_name": "Valorant",
+  "periodMinutes": 60,
+  "game_id": "123456"
+}
+```
 
 Notes
 

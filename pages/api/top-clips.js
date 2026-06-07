@@ -12,13 +12,14 @@ export default async function handler(req, res) {
     const fallbackBroadcaster = process.env.TOP_BROADCASTER_ID;
 
     const game_id = query.game_id || fallbackGame;
+    const game_name = query.game_name || process.env.GAME_NAME;
     const broadcaster_id = query.broadcaster_id || fallbackBroadcaster;
     if (!clientId || !clientSecret) {
       res.status(400).json({ error: 'TWITCH_CLIENT_ID and TWITCH_CLIENT_SECRET must be set in env' });
       return;
     }
-    if (!game_id && !broadcaster_id) {
-      res.status(400).json({ error: 'Provide `game_id` or set TOP_GAME_ID / broadcaster_id / TOP_BROADCASTER_ID in env' });
+    if (!game_id && !game_name && !broadcaster_id) {
+      res.status(400).json({ error: 'Provide `game_id`, `game_name`, or set TOP_GAME_ID / TOP_BROADCASTER_ID in env' });
       return;
     }
 
@@ -26,6 +27,7 @@ export default async function handler(req, res) {
       clientId,
       clientSecret,
       game_id,
+      game_name,
       broadcaster_id,
       limit,
       periodMinutes,

@@ -22,6 +22,7 @@ export default function Home() {
       q.set('periodMinutes', String(period));
       q.set('limit', String(limit));
       if (gameId) q.set('game_id', gameId);
+      if (gameName) q.set('game_name', gameName);
       const res = await fetch(`/api/top-clips?${q.toString()}`);
       const json = await res.json();
       setClips(json.clips || []);
@@ -39,12 +40,17 @@ export default function Home() {
     setGenerateResult(null);
 
     try {
-      const q = new URLSearchParams();
-      q.set('periodMinutes', String(period));
-      q.set('game_name', gameName);
-      if (gameId) q.set('game_id', gameId);
+      const body = {
+        periodMinutes: period,
+        game_name: gameName,
+      };
+      if (gameId) body.game_id = gameId;
 
-      const res = await fetch(`/api/generate-hourly-video?${q.toString()}`, { method: 'POST' });
+      const res = await fetch('/api/generate-hourly-video', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
       const json = await res.json();
       if (!res.ok) {
         throw new Error(json.error || 'Unknown error');
@@ -78,6 +84,9 @@ export default function Home() {
         <button onClick={fetchClips} style={{ marginRight: 10 }}>Refresh Clips</button>
         <button onClick={generateVideo} disabled={generateLoading || loading}>{generateLoading ? 'Generating video...' : 'Generate TikTok Video'}</button>
       </div>
+      <div style={{ marginBottom: 18, color: '#555', maxWidth: 680 }}>
+        Enter a `Game Name` and the app will try to resolve it to a Twitch game ID automatically. You can also provide a raw `Game ID` if you already have it.
+      </div>
 
       {loading && <div>Loading clips...</div>}
       {generateMessage && <div style={{ margin: '8px 0', color: '#333' }}>{generateMessage}</div>}
@@ -85,6 +94,11 @@ export default function Home() {
         <div style={{ marginBottom: 12, padding: 10, background: '#f8f8f8', borderRadius: 8 }}>
           <div><strong>Video job submitted.</strong></div>
           <div>Job response: {JSON.stringify(generateResult.job)}</div>
+          {generateResult.job.status_url && (
+            <div>
+              <a href={generateResult.job.status_url} target="_blank" rel="noreferrer">View job status</a>
+            </div>
+          )}
         </div>
       )}
 
